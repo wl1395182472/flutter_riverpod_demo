@@ -1,6 +1,6 @@
 name: flutter_riverpod_demo
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: 'https://github.com/wl1395182472/flutter_riverpod_demo'
 version: 1.0.0+1000001
 # 版本: 1.0.0
 # 版本号: 1000001
