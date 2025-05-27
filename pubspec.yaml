@@ -105,3 +105,51 @@ flutter:
     - assets/image/global/
     - assets/image/splash/
 
+  fonts:
+    - family: Bitter
+      fonts:
+        - asset: assets/font/Bitter-Thin.ttf
+          weight: 100
+        - asset: assets/font/Bitter-ThinItalic.ttf
+          weight: 100
+          style: italic
+        - asset: assets/font/Bitter-ExtraLight.ttf
+          weight: 200
+        - asset: assets/font/Bitter-ExtraLightItalic.ttf
+          weight: 200
+          style: italic
+        - asset: assets/font/Bitter-Light.ttf
+          weight: 300
+        - asset: assets/font/Bitter-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/font/Bitter-Regular.ttf
+          weight: 400
+        - asset: assets/font/Bitter-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/font/Bitter-Medium.ttf
+          weight: 500
+        - asset: assets/font/Bitter-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/font/Bitter-SemiBold.ttf
+          weight: 600
+        - asset: assets/font/Bitter-SemiBoldItalic.ttf
+          weight: 600
+          style: italic
+        - asset: assets/font/Bitter-Bold.ttf
+          weight: 700
+        - asset: assets/font/Bitter-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/font/Bitter-ExtraBold.ttf
+          weight: 800
+        - asset: assets/font/Bitter-ExtraBoldItalic.ttf
+          weight: 800
+          style: italic
+        - asset: assets/font/Bitter-Black.ttf
+          weight: 900
+        - asset: assets/font/Bitter-BlackItalic.ttf
+          weight: 900
+          style: italic
