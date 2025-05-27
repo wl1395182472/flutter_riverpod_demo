@@ -29,7 +29,7 @@ android {
     // 编译 SDK 版本，从 Flutter 插件获取
     compileSdk = flutter.compileSdkVersion
     // 将 NDK 版本更新为插件所需的最高版本
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     // Java 编译选项配置
     compileOptions {
