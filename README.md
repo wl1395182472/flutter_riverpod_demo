@@ -266,7 +266,7 @@ open ios/Runner.xcworkspace
 如有问题或建议，请通过以下方式联系：
 
 - 创建 [Issue](https://github.com/wl1395182472/flutter_riverpod_demo/issues)
-- 发送邮件至: your-email@example.com
+- 发送邮件至: wl1395182472@gmail.com
 
 ---
 
