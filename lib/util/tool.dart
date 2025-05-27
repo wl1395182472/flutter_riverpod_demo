@@ -1,31 +1,54 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:ui';
+import 'dart:convert' show utf8;
+import 'dart:io' show Platform;
+import 'dart:typed_data' show Uint8List;
+import 'dart:ui' show Rect;
 
-import 'package:app_tracking_transparency/app_tracking_transparency.dart';
-import 'package:crypto/crypto.dart';
-import 'package:flutter/foundation.dart';
-import 'package:intl/intl.dart';
-import 'package:mime/mime.dart';
-import 'package:mobile_device_identifier/mobile_device_identifier.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher_string.dart';
-import 'package:uuid/uuid.dart';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart'
+    show TrackingStatus, AppTrackingTransparency;
+import 'package:crypto/crypto.dart' show sha256, md5;
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:intl/intl.dart' show NumberFormat;
+import 'package:mime/mime.dart' show lookupMimeType;
+import 'package:mobile_device_identifier/mobile_device_identifier.dart'
+    show MobileDeviceIdentifier;
+import 'package:share_plus/share_plus.dart'
+    show XFile, SharePlus, ShareParams, ShareResultStatus;
+import 'package:url_launcher/url_launcher_string.dart'
+    show canLaunchUrlString, launchUrlString;
+import 'package:uuid/uuid.dart' show Uuid;
 
-import '../service/storage_service.dart';
-import 'log.dart';
-import 'toast.dart';
+import '../service/storage_service.dart' show StorageService;
+import 'log.dart' show Log;
+import 'toast.dart' show Toast;
 
+/// 工具类
+///
+/// 提供应用中常用的工具方法和功能
+/// - 加密算法（SHA256、MD5）
+/// - UUID生成
+/// - URL启动
+/// - 数字格式化
+/// - 设备ID获取
+/// - 分享功能
+/// - MIME类型判断
+///
+/// 使用单例模式，确保全局唯一实例
 class Tool {
+  /// 私有构造函数，防止外部直接实例化
   Tool._privateConstructor();
 
+  /// 单例实例
   static final instance = Tool._privateConstructor();
 
+  /// 工厂构造函数，返回单例实例
   factory Tool() {
     return instance;
   }
 
-  /// sha256 加密
+  /// SHA256 加密
+  ///
+  /// [input] 需要加密的字符串
+  /// 返回SHA256加密后的字符串
   String generateSHA256(String input) {
     // 将字符串转换为字节数组
     final bytes = utf8.encode(input);
@@ -51,6 +74,10 @@ class Tool {
     return uuid.v4();
   }
 
+  /// 启动外部URL
+  ///
+  /// [url] 要启动的URL地址
+  /// 支持网页链接、深度链接等各种URL类型
   Future<void> launchUrl(String url) async {
     try {
       final canLaunch = await canLaunchUrlString(url);
@@ -69,6 +96,10 @@ class Tool {
     }
   }
 
+  /// 将数字转换为简化显示格式
+  ///
+  /// [value] 要格式化的数字
+  /// 返回格式化后的字符串，如：1000 -> 1K, 1000000 -> 1M
   String toCountText(int value) {
     return NumberFormat.compact().format(value);
   }
@@ -81,6 +112,7 @@ class Tool {
   Future<String> fetchDeviceId() async {
     if (StorageService.instance.uniqueDeviceId.isEmpty) {
       if (kIsWeb) {
+        // Web平台处理（此处可以添加Web端的唯一标识获取逻辑）
       } else if (Platform.isIOS) {
         // 获取iOS广告追踪授权状态
         appTrackingTransparencyStatus =

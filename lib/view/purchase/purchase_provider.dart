@@ -1,31 +1,49 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
+import 'dart:async' show StreamSubscription;
+import 'dart:convert' show jsonEncode, jsonDecode;
+import 'dart:io' show Platform;
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart' show ChangeNotifier, BuildContext;
+import 'package:flutter/services.dart' show PlatformException;
+import 'package:flutter_riverpod/flutter_riverpod.dart'
+    show ChangeNotifierProvider;
 import 'package:go_router/go_router.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:in_app_purchase_android/in_app_purchase_android.dart';
-import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
-import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
+import 'package:in_app_purchase/in_app_purchase.dart'
+    show
+        InAppPurchase,
+        PurchaseDetails,
+        ProductDetails,
+        PurchaseStatus,
+        PurchaseParam;
+import 'package:in_app_purchase_android/in_app_purchase_android.dart'
+    show GooglePlayProductDetails, GooglePlayPurchaseParam;
+import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart'
+    show InAppPurchaseStoreKitPlatformAddition;
+import 'package:in_app_purchase_storekit/store_kit_wrappers.dart'
+    show SKPaymentQueueWrapper;
 
-import '../../model/product.dart';
-import '../../model/storekit_payment_queue_delegate.dart';
-import '../../service/storage_service.dart';
-import '../../util/log.dart';
-import '../../util/secure_storage.dart';
-import '../../util/toast.dart';
-import '../../constant/app_config.dart';
+import '../../constant/app_config.dart' show AppConfig;
+import '../../model/product.dart'
+    show
+        Product,
+        ProductType,
+        SubscriptionPlan,
+        ConsumableType,
+        SubscriptionType,
+        BillingPeriod;
+import '../../model/storekit_payment_queue_delegate.dart'
+    show StorekitPaymentQueueDelegate;
+import '../../service/storage_service.dart' show StorageService;
+import '../../util/log.dart' show Log;
+import '../../util/secure_storage.dart' show SecureStorage;
+import '../../util/toast.dart' show Toast;
 
 /// 处理应用内购买的状态管理和业务逻辑
 ///
 /// 该类负责初始化购买系统、加载商品信息、处理购买流程和恢复购买等功能。
 /// 通过Riverpod的Notifier实现状态管理，并提供给UI层使用。
 class PurchaseNotifier extends ChangeNotifier {
-  // 日志打印总开关
+  // 日志打印总开关，用于控制调试信息输出
   final _enableLogging = false;
 
   /// 存储构建上下文，用于导航操作

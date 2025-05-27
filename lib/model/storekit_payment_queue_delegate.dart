@@ -1,30 +1,50 @@
-import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
-import 'dart:convert';
+import 'dart:convert' show jsonDecode, jsonEncode;
 
-import '../util/log.dart';
-import '../util/secure_storage.dart';
+import 'package:in_app_purchase_storekit/store_kit_wrappers.dart'
+    show
+        SKPaymentQueueDelegateWrapper,
+        SKPaymentTransactionWrapper,
+        SKStorefrontWrapper;
 
+import '../util/log.dart' show Log;
+import '../util/secure_storage.dart' show SecureStorage;
+
+/// StoreKit支付队列委托
+///
+/// 实现SKPaymentQueueDelegateWrapper，用于处理iOS StoreKit的支付队列事件
+/// 主要功能：
+/// - 防止重复处理同一交易
+/// - 持久化存储已处理的交易记录
+/// - 提供交易状态检查和控制逻辑
+///
+/// 使用单例模式确保全局唯一的委托实例
+
+/// StoreKit支付队列委托类
+///
+/// 负责管理iOS支付队列的交易处理逻辑，防止重复交易和确保交易安全性
 class StorekitPaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {
-  // 用于快速检查的内存缓存
+  /// 用于快速检查的内存缓存
   final Set<String> _processedTransactions = <String>{};
 
-  // SecureStorage 的键
+  /// SecureStorage 的键名，用于持久化存储已处理交易列表
   static const String _storageKey = 'processed_transactions';
 
-  // 单例模式
+  /// 单例实例
   static final StorekitPaymentQueueDelegate _instance =
       StorekitPaymentQueueDelegate._internal();
 
+  /// 获取单例实例
   factory StorekitPaymentQueueDelegate() {
     return _instance;
   }
 
+  /// 私有构造函数
   StorekitPaymentQueueDelegate._internal() {
     // 初始化时从持久化存储加载数据
     _loadProcessedTransactions();
   }
 
-  // 从 SecureStorage 加载已处理的交易
+  /// 从 SecureStorage 加载已处理的交易记录
   Future<void> _loadProcessedTransactions() async {
     final String? storedData = await SecureStorage.instance.read(
       key: _storageKey,
@@ -36,7 +56,7 @@ class StorekitPaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {
     }
   }
 
-  // 保存已处理的交易到 SecureStorage
+  /// 保存已处理的交易到 SecureStorage
   Future<void> _saveProcessedTransaction(String transactionId) async {
     _processedTransactions.add(transactionId);
     final String data = jsonEncode(_processedTransactions.toList());

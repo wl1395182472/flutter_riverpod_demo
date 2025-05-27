@@ -1,15 +1,56 @@
-import 'package:bot_toast/bot_toast.dart';
-import 'package:flutter/material.dart';
+import 'package:bot_toast/bot_toast.dart' show BotToast;
+import 'package:flutter/material.dart'
+    show
+        Container,
+        Alignment,
+        EdgeInsets,
+        MainAxisAlignment,
+        MainAxisSize,
+        BorderRadius,
+        Colors,
+        BoxDecoration,
+        TextAlign,
+        FontWeight,
+        Column;
 
+import '../component/global_text.dart' show GlobalText;
+
+/// Toast 工具类
+///
+/// 基于 bot_toast 包的 Toast 通知工具
+/// 提供加载提示和消息显示功能
+///
+/// 使用示例：
+/// ```dart
+/// // 显示加载框
+/// final cancel = Toast.showLoading();
+///
+/// // 关闭所有加载框
+/// Toast.closeAllLoading();
+///
+/// // 显示消息
+/// Toast.show('操作成功');
+/// ```
 class Toast {
+  /// 显示加载提示框
+  ///
+  /// 返回一个取消函数，可用于手动关闭加载框
   static showLoading() {
     return BotToast.showLoading();
   }
 
+  /// 关闭所有加载提示框
   static closeAllLoading() {
     return BotToast.closeAllLoading();
   }
 
+  /// 显示消息提示
+  ///
+  /// [message] 要显示的消息内容
+  /// [allowClick] 是否允许点击穿透，默认为true
+  /// [durationSeconds] 显示持续时间（秒），默认3秒
+  /// [onlyOne] 是否只显示一个Toast，默认为true
+  /// [onClose] Toast关闭时的回调函数
   static void show(
     String message, {
     bool allowClick = true,
@@ -40,18 +81,16 @@ class Toast {
                 borderRadius: BorderRadius.circular(8.0),
                 color: Colors.black38,
               ),
-              child: Text(
+              child: GlobalText(
                 message,
                 maxLines: null,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Barlow',
-                  color: Colors.white,
-                  fontSize: 14.0,
-                  height: 1.2,
-                  letterSpacing: 0.2,
-                  fontWeight: FontWeight.w400,
-                ),
+                fontFamily: 'Barlow',
+                color: Colors.white,
+                fontSize: 14.0,
+                height: 1.2,
+                letterSpacing: 0.2,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ],

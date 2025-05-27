@@ -1,6 +1,15 @@
-// 用户选择是什么商品，消耗品或者订阅，消耗品中的哪个，订阅中的哪个，是pro还是pro plus，是月付还是年付
+import 'package:in_app_purchase/in_app_purchase.dart' show ProductDetails;
 
-import 'package:in_app_purchase/in_app_purchase.dart';
+/// 商品模型类
+///
+/// 定义了应用内购买商品的相关数据结构和枚举类型
+/// 用于管理用户选择的商品类型（消耗品或订阅），以及具体的商品规格和计费周期
+///
+/// 主要功能：
+/// - 定义商品类型和具体规格
+/// - 提供预定义的商品实例
+/// - 支持从ProductDetails创建Product实例
+/// - 提供便捷的商品属性判断方法
 
 /// 商品类型枚举
 enum ProductType {

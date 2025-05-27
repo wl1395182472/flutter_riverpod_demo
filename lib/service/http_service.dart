@@ -1,24 +1,44 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
+import 'dart:convert' show utf8, jsonDecode;
+import 'dart:io' show File;
+import 'dart:typed_data' show Uint8List;
 
-import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import 'package:dio/dio.dart'
+    show
+        Dio,
+        BaseOptions,
+        Options,
+        CancelToken,
+        ProgressCallback,
+        Response,
+        DioException,
+        ResponseBody,
+        LogInterceptor,
+        FormData,
+        MultipartFile,
+        ResponseType,
+        DioExceptionType;
+import 'package:flutter/foundation.dart' show kDebugMode;
 
-import '../model/http_method.dart';
-import '../util/log.dart';
+import '../model/http_method.dart' show HttpMethod;
+import '../util/log.dart' show Log;
 
 /// HTTP服务类，封装dio插件实现网络请求
+/// 提供GET、POST、文件上传下载、SSE连接等功能
+/// 使用单例模式确保全局唯一实例
 class HttpService {
-  /// 单例模式
+  /// 单例模式实例
   static final HttpService instance = HttpService._privateConstructor();
+
+  /// 工厂构造函数，返回单例实例
   factory HttpService() => instance;
+
+  /// 私有构造函数，防止外部实例化
   HttpService._privateConstructor();
 
-  /// dio实例
+  /// dio实例，用于发起HTTP请求
   late final Dio _dio = _createDio();
 
-  /// 创建dio实例并配置
+  /// 创建dio实例并配置基础设置和拦截器
   Dio _createDio() {
     final dio = Dio(
       BaseOptions(
@@ -33,14 +53,14 @@ class HttpService {
       ),
     );
 
-    // 添加拦截器
+    // 添加日志拦截器，用于调试网络请求
     dio.interceptors.add(LogInterceptor(
-      request: true,
-      requestHeader: true,
-      requestBody: true,
-      responseHeader: true,
-      responseBody: true,
-      error: true,
+      request: true, // 记录请求信息
+      requestHeader: true, // 记录请求头
+      requestBody: true, // 记录请求体
+      responseHeader: true, // 记录响应头
+      responseBody: true, // 记录响应体
+      error: true, // 记录错误信息
       logPrint: (object) {
         if (kDebugMode) {
           Log().logger.d(object.toString());
@@ -52,6 +72,14 @@ class HttpService {
   }
 
   /// 基础请求方法
+  /// [url] 请求地址
+  /// [method] 请求方法
+  /// [queryParameters] 查询参数
+  /// [data] 请求体数据
+  /// [options] 请求选项
+  /// [cancelToken] 取消令牌
+  /// [onSendProgress] 上传进度回调
+  /// [onReceiveProgress] 下载进度回调
   Future<dynamic> request({
     required String url,
     required HttpMethod method,
